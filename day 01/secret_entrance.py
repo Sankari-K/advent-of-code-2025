@@ -1,4 +1,7 @@
-from functools import reduce 
+from functools import reduce
+from itertools import accumulate
+
+DIRECTIONS = {"L": -1, "R": 1}
 
 def get_puzzle_input(directory):
     with open(directory) as f:
@@ -9,23 +12,28 @@ def get_expanded_rotation(rotation):
     return [(rotation[0], 1)] * rotation[1]
 
 def get_position(current_position, rotation):
-    match rotation[0]:
-        case "L":
-            return (current_position - rotation[1]) % 100
-        case "R":
-            return (current_position + rotation[1]) % 100
+    return (current_position + DIRECTIONS[rotation[0]] * rotation[1]) % 100
 
-def get_position_frequency(target_position, current_position, rotations):
+def get_position_frequency(target_position, current_position, rotations):       
     frequency = 0
     for rotation in rotations:
         current_position = get_position(current_position, rotation)
         if current_position == target_position:
             frequency += 1
     return frequency
-    # return sum(map(lambda x, y: get_position(x, y) == target_position, rotations))    
 
 rotations = get_puzzle_input(r"./puzzle_input.txt")
-print(get_position_frequency(0, 50, rotations))
-
 expanded_rotations = reduce(lambda x, y: x + y, map(get_expanded_rotation, rotations))
-print(get_position_frequency(0, 50, expanded_rotations))
+
+print(get_position_frequency(0, 50, rotations)) # part a
+print(get_position_frequency(0, 50, expanded_rotations)) # part b
+
+# rotations = [r1, r2, r3]
+# x = f(x, r1) => x = f(f(x, r1), r2) 
+
+# r = [1, 2, 3, 4, 5]
+# def f(a, b):
+#     return a * b
+# a = 1
+# [f(a, r[0]), f(f(a, r[0]), r[1])]
+ 
